@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ANISHA ❤️ PRANAV</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;overflow:hidden;font-family:Poppins;color:#fff}
+canvas{position:fixed;inset:0}
+
+.text{
+  position:fixed;
+  width:100%;
+  top:40%;
+  text-align:center;
+  font-size:24px;
+  opacity:0;
+  transition:1.5s;
+  text-shadow:0 0 20px #ff4da6,0 0 60px #ff7acb;
+}
+.text.show{opacity:1}
+
+.btn{
+  position:fixed;
+  bottom:15%;
+  left:50%;
+  transform:translateX(-50%);
+  padding:14px 40px;
+  border:none;
+  border-radius:40px;
+  background:linear-gradient(135deg,#ff4d6d,#ff9a9e);
+  color:white;
+  font-size:18px;
+  box-shadow:0 0 30px #ff4d6d;
+}
+</style>
+</head>
+
+<body>
+
+<audio id="music" loop>
+  <source src="bg.mp3" type="audio/mpeg">
+</audio>
+
+<canvas id="c"></canvas>
+
+<div class="text" id="t1">💌 Touch to Open</div>
+<div class="text" id="t2">💖</div>
+<div class="text" id="t3">
+Happy New Year ✨<br>
+<b>ANISHA ❤️ PRANAV</b>
+</div>
+
+<button class="btn" onclick="next()">Touch</button>
+
+<script>
+const c=document.getElementById("c");
+const ctx=c.getContext("2d");
+resize();onresize=resize;
+function resize(){c.width=innerWidth;c.height=innerHeight}
+
+let step=0;
+function next(){
+  step++;
+  document.getElementById("music").play();
+  document.querySelector(".btn").style.display="none";
+  if(step===1) document.getElementById("t1").classList.add("show");
+  if(step===2){heartBlast();document.getElementById("t2").classList.add("show")}
+  if(step===3) document.getElementById("t3").classList.add("show");
+  setTimeout(()=>{document.querySelector(".btn").style.display="block"},1500);
+}
+
+/* STARS */
+let stars=[];
+for(let i=0;i<300;i++)
+stars.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.5});
+
+/* HEART PARTICLES */
+let hearts=[];
+function heartBlast(){
+  const cx=c.width/2,cy=c.height/2;
+  for(let a=0;a<Math.PI*2;a+=0.15){
+    let r=22*(1-Math.sin(a));
+    hearts.push({
+      x:cx,y:cy,
+      vx:r*Math.cos(a)*0.6,
+      vy:-r*Math.sin(a)*0.6,
+      life:120
+    });
+  }
+}
+
+/* DRAW */
+function draw(){
+  ctx.clearRect(0,0,c.width,c.height);
+
+  /* SKY */
+  let g=ctx.createLinearGradient(0,0,0,c.height);
+  g.addColorStop(0,"#050018");
+  g.addColorStop(1,"#000");
+  ctx.fillStyle=g;
+  ctx.fillRect(0,0,c.width,c.height);
+
+  /* MOON */
+  ctx.beginPath();
+  ctx.arc(c.width-120,120,55,0,Math.PI*2);
+  ctx.fillStyle="#fff";
+  ctx.shadowBlur=40;
+  ctx.shadowColor="#fff";
+  ctx.fill();
+  ctx.shadowBlur=0;
+
+  /* STARS */
+  ctx.fillStyle="#fff";
+  stars.forEach(s=>ctx.fillRect(s.x,s.y,s.r,s.r));
+
+  /* HEART BLAST */
+  hearts.forEach((h,i)=>{
+    ctx.fillStyle="rgba(255,80,160,.9)";
+    ctx.fillRect(h.x,h.y,2.5,2.5);
+    h.x+=h.vx*0.08;
+    h.y+=h.vy*0.08;
+    h.life--;
+    if(h.life<=0) hearts.splice(i,1);
+  });
+
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+
+</body>
+</html>
