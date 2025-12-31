@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ANISHA ❤️ PRANAV</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  overflow:hidden;
+  background:#000;
+  font-family:'Poppins',sans-serif;
+  color:#fff;
+}
+
+canvas{
+  position:fixed;
+  inset:0;
+}
+
+/* TEXT */
+.glowText{
+  position:fixed;
+  top:42%;
+  width:100%;
+  text-align:center;
+  font-size:22px;
+  color:#ffd6e8;
+  text-shadow:
+    0 0 10px #ff4da6,
+    0 0 25px #ff7acb,
+    0 0 60px rgba(255,122,203,.9);
+  animation:fade 4s infinite;
+}
+@keyframes fade{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* START BUTTON */
+.startBtn{
+  position:fixed;
+  bottom:15%;
+  left:50%;
+  transform:translateX(-50%);
+  padding:14px 40px;
+  border:none;
+  border-radius:40px;
+  background:linear-gradient(135deg,#ff4d6d,#ff9a9e);
+  font-size:18px;
+  color:#fff;
+  cursor:pointer;
+  box-shadow:0 0 25px #ff4d6d;
+}
+</style>
+</head>
+
+<body>
+
+<audio id="music" loop>
+  <source src="bg.mp3" type="audio/mpeg">
+</audio>
+
+<canvas id="c"></canvas>
+
+<div class="glowText">
+That one special person ✨<br>
+<b>ANISHA ❤️ PRANAV</b>
+</div>
+
+<button class="startBtn" onclick="start()">Touch to Open 💌</button>
+
+<script>
+const canvas=document.getElementById("c");
+const ctx=canvas.getContext("2d");
+resize();
+window.onresize=resize;
+function resize(){
+  canvas.width=innerWidth;
+  canvas.height=innerHeight;
+}
+
+/* MUSIC */
+function start(){
+  document.getElementById("music").play();
+  document.querySelector(".startBtn").remove();
+}
+
+/* STARS */
+let stars=[];
+for(let i=0;i<250;i++){
+  stars.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*1.5,
+    o:Math.random()
+  });
+}
+
+/* COMET */
+let comet={x:-200,y:100,vx:6,vy:2};
+
+/* HEART FIREWORK */
+let hearts=[];
+function heartFire(){
+  const cx=Math.random()*canvas.width*0.6+canvas.width*0.2;
+  const cy=Math.random()*canvas.height*0.4+canvas.height*0.2;
+  for(let a=0;a<Math.PI*2;a+=0.2){
+    let r=16*(1-Math.sin(a));
+    hearts.push({
+      x:cx,y:cy,
+      vx:r*Math.cos(a),
+      vy:-r*Math.sin(a),
+      life:80
+    });
+  }
+}
+setInterval(heartFire,5000);
+
+/* DRAW */
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  /* SKY */
+  let g=ctx.createLinearGradient(0,0,0,canvas.height);
+  g.addColorStop(0,"#020111");
+  g.addColorStop(1,"#000");
+  ctx.fillStyle=g;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  /* MOON */
+  ctx.beginPath();
+  ctx.arc(canvas.width-120,120,60,0,Math.PI*2);
+  ctx.fillStyle="#fff";
+  ctx.shadowBlur=40;
+  ctx.shadowColor="#fff";
+  ctx.fill();
+  ctx.shadowBlur=0;
+
+  /* STARS */
+  stars.forEach(s=>{
+    ctx.fillStyle=`rgba(255,255,255,${s.o})`;
+    ctx.fillRect(s.x,s.y,s.r,s.r);
+  });
+
+  /* COMET */
+  ctx.beginPath();
+  ctx.moveTo(comet.x,comet.y);
+  ctx.lineTo(comet.x-80,comet.y-20);
+  ctx.strokeStyle="rgba(255,180,255,.7)";
+  ctx.lineWidth=2;
+  ctx.stroke();
+  comet.x+=comet.vx;
+  comet.y+=comet.vy;
+  if(comet.x>canvas.width+200){
+    comet.x=-200;
+    comet.y=Math.random()*200;
+  }
+
+  /* HEARTS */
+  hearts.forEach((h,i)=>{
+    ctx.fillStyle="rgba(255,100,200,.9)";
+    ctx.fillRect(h.x,h.y,2,2);
+    h.x+=h.vx*0.03;
+    h.y+=h.vy*0.03;
+    h.life--;
+    if(h.life<=0) hearts.splice(i,1);
+  });
+
+  /* MOUNTAINS */
+  ctx.fillStyle="#020008";
+  ctx.beginPath();
+  ctx.moveTo(0,canvas.height);
+  ctx.lineTo(0,canvas.height*0.75);
+  ctx.lineTo(canvas.width*0.2,canvas.height*0.6);
+  ctx.lineTo(canvas.width*0.4,canvas.height*0.72);
+  ctx.lineTo(canvas.width*0.6,canvas.height*0.55);
+  ctx.lineTo(canvas.width*0.8,canvas.height*0.7);
+  ctx.lineTo(canvas.width,canvas.height*0.6);
+  ctx.lineTo(canvas.width,canvas.height);
+  ctx.fill();
+
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>
